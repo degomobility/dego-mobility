@@ -31,9 +31,11 @@ import {
   Truck,
   Zap,
 } from "lucide-react";
-
+const logo =
+  "https://res.cloudinary.com/le0ehnzr/image/upload/v1794987054/icon.png";
 const heroImage =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuAcj5rRBb_xw5d5ALIItS7NLz-JykqOSmNqla5u3RFtbrdyzkArgesLg9M9GiqUwC6WMbfg0ywvj3yW3XY4QOY6r6IDzPHAHJl8QiIz7YxMzxgpA5dmH-44TJNx5XcQSm1X7eNJAZJ2LCcVxCsaHY2y8WM4aMCL7s2AKGOlXHAQzI2eFJkO_SKP_vob30nBDy08S6j8MYX3z6uvIL2DwHQVkqdfRq-daapJNb7o6jL0DBvj0KXeeBN0Wg";
+  "https://res.cloudinary.com/le0ehnzr/image/upload/v1794986413/banner.jpg";
+  // "https://lh3.googleusercontent.com/aida-public/AB6AXuAcj5rRBb_xw5d5ALIItS7NLz-JykqOSmNqla5u3RFtbrdyzkArgesLg9M9GiqUwC6WMbfg0ywvj3yW3XY4QOY6r6IDzPHAHJl8QiIz7YxMzxgpA5dmH-44TJNx5XcQSm1X7eNJAZJ2LCcVxCsaHY2y8WM4aMCL7s2AKGOlXHAQzI2eFJkO_SKP_vob30nBDy08S6j8MYX3z6uvIL2DwHQVkqdfRq-daapJNb7o6jL0DBvj0KXeeBN0Wg";
 
 export const metadata: Metadata = {
   title: "DEGO | Rides, delivery and everyday mobility",
@@ -131,7 +133,7 @@ export default function HomePage() {
             <img
               alt="DEGO logo"
               className="h-8 w-auto object-contain"
-              src="https://lh3.googleusercontent.com/aida/AEtjO1VN-LCbS9pM3f5T3tAn4GxdWRPKNiUP4Fz4LM0N96hdRW1zg98MSp5XQKxclqfNa2h6J0vG_SG5xHQZ6zNQ3HE66M3fr5w2aSNOORsKTn1CsCot_MKfQUr7ABADufHvi9rn9bbXbEYIufLHa3NPdwAb83UMELEXWJWmNEeOi-LA3spgczt2rrIghfyB7HT_36vZet219LpQywRDlOWsptmEPNj2QhbX6oVwVQhw6M0ZnEx_3ZnJyIHZJkk"
+              src={logo}
             />
             <span className="font-headline-sm text-headline-sm tracking-tight text-on-surface">
               DEGO
@@ -189,7 +191,7 @@ export default function HomePage() {
               <img
                 alt="Profile"
                 className="size-8 rounded-full object-cover"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1XJKcEWV6ynTInCkvTn2y_4L6Sx-xvnFfzvYCTQudBotBof5k1cQGVgLDlxYNJZRTeTCqHjhLbNcvrNCqxjZtT_rvkWAPelzcFRjwN6QTNdUlUNUOVHCiBNmf2vHwg6XeH5pj8HBpHYaKzXuz5YXEryyAFVi0kQTsqQO1zR7hGSzd8UPk6PxCF_NtrbhfIjI0EUKr0N9xwimlXRqrLOhBYfgO7Enc4zYIXFu6AyJlPiLGuBc89Xe5TzQ0-h"
+                src={logo}
               />
             </div>
           </div>
@@ -579,7 +581,7 @@ export default function HomePage() {
                         INSTANT CASHOUT
                       </span>
                       <p className="mt-0.5 font-headline-sm text-headline-sm font-bold text-on-surface">
-                        $0.50 Fee
+                        1000RWF Fee
                       </p>
                       <span className="font-body-sm text-body-sm text-secondary">
                         Same-day bank deposits
@@ -798,11 +800,15 @@ export default function HomePage() {
           <div className="grid grid-cols-1 gap-space-xl border-b border-outline-variant/40 pb-space-xl md:grid-cols-2 lg:grid-cols-5">
             <div className="space-y-space-md lg:col-span-2">
               <Link href="#home" className="flex items-center gap-space-sm">
-                <span className="flex size-8 items-center justify-center rounded-md bg-primary-container font-black text-on-primary-container">
+                {/* <span className="flex size-8 items-center justify-center rounded-md bg-primary-container font-black text-on-primary-container">
                   2G
-                </span>
+                </span> */}
+                <img src={logo} alt="DEGO logo" className="h-8 w-auto" />
                 <span className="font-headline-sm text-headline-sm text-on-surface">
                   DEGO
+                </span>
+                <span className="font-label-sm text-label-sm text-on-surface-variant">
+                  Go Anyware
                 </span>
               </Link>
               <p className="max-w-sm font-body-md text-body-md text-on-surface-variant">
@@ -903,11 +909,10 @@ export default function HomePage() {
               </h3>
               <ul className="space-y-space-sm font-body-sm text-body-sm">
                 {[
-                  "London Metro Area",
-                  "Berlin & Potsdam",
-                  "Paris Grand Hub",
-                  "Tokyo Bay Metropolitan",
-                  "Singapore Central",
+                  "Kigali Metro Area",
+                  "Goma Transit Zone",
+                  "Musanze City Center",
+                  "Gisenyi Waterfront",
                 ].map((city) => (
                   <li key={city}>
                     <span className="text-on-surface">{city}</span>
@@ -926,7 +931,7 @@ export default function HomePage() {
           <div className="flex flex-col items-center justify-between gap-space-md pt-space-lg font-body-sm text-body-sm md:flex-row">
             <div className="flex flex-wrap items-center gap-space-md text-on-surface-variant">
               <p>
-                © 2025 DEGO Urban Mobility Technologies Inc. All rights reserved.
+                © 2025 - 2026 DEGO Urban Mobility Technologies Inc. All rights reserved.
               </p>
               <Link
                 className="transition-colors hover:text-on-surface"
