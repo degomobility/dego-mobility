@@ -18,6 +18,8 @@ export const metadata = {
   title: "DEGO Operations Console — Mobility Command Center",
   description:
     "Authoritative operations console for DEGO fleet, driver onboarding, trips, dispatch, and monitoring",
+  favicon:
+    "https://res.cloudinary.com/le0ehnzr/image/upload/v1794987054/icon.png",
 };
 
 export default function RootLayout({
