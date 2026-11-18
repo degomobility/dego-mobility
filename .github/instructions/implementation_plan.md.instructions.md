@@ -1,15 +1,14 @@
-# 2GO Ecosystem — SDLC and 7-Day AI Implementation Plan
+# DEGO Ecosystem — SDLC and 7-Day AI Implementation Plan
 
-**Project:** 2GO Mobility Ecosystem MVP  
-**Source:** 2GO Ecosystem — Platform Functional Blueprint, August 2026  
+**Project:** DEGO Mobility Ecosystem MVP  
+**Source:** DEGO Ecosystem — Platform Functional Blueprint, August 2026  
 **Target:** Production-deployed MVP within 7 calendar days  
 **Primary objective:** Deliver one integrated ride-hailing vertical slice with Customer, Driver, and Operations interfaces sharing one authoritative backend.
 
 ---
 
 ## 1. Executive Summary
-
-The 2GO blueprint defines four connected platforms:
+The DEGO blueprint defines four connected platforms:
 
 1. Customer App — booking, tracking, payment, safety, feedback.
 2. Driver App — availability, trip execution, navigation, earnings, vehicle controls.
@@ -1111,7 +1110,7 @@ Use the following as the instruction to an implementation AI.
 
 ## ROLE
 
-You are the lead software architect and senior full-stack engineer responsible for implementing the 2GO Mobility Ecosystem MVP.
+You are the lead software architect and senior full-stack engineer responsible for implementing the DEGO Mobility Ecosystem MVP.
 
 You must implement the system according to this specification. Do not expand the scope unless explicitly requested.
 
@@ -1492,7 +1491,7 @@ Finally:
 
 # 25. Source Alignment
 
-The project scope and terminology in this plan are derived from the supplied 2GO Ecosystem Platform Functional Blueprint. The blueprint identifies the four interfaces, shared backend components, integrated operating flow, role-based access, development roadmap, KPI framework, and product design principles.
+The project scope and terminology in this plan are derived from the supplied DEGO Ecosystem Platform Functional Blueprint. The blueprint identifies the four interfaces, shared backend components, integrated operating flow, role-based access, development roadmap, KPI framework, and product design principles.
 
 The blueprint's MVP phase specifically identifies customer booking, driver app, basic dispatch, live tracking, fare calculation, payment workflow, ratings, and basic owner dashboard as the first development phase.
 

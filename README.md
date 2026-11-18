@@ -1,4 +1,4 @@
-# 2GO Mobility Ecosystem — MVP
+# DEGO Mobility Ecosystem — MVP
 
 Authoritative, full-stack ride-hailing vertical slice uniting Customer, Driver, and Operations interfaces powered by a single authoritative TypeScript backend.
 

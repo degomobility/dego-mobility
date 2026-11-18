@@ -1,6 +1,6 @@
-# 2GO Mobility Ecosystem MVP — Completion Walkthrough
+# DEGO Mobility Ecosystem MVP — Completion Walkthrough
 
-All 7 stages of the **2GO Mobility Ecosystem MVP** have been implemented, tested, and validated according to the blueprint.
+All 7 stages of the **DEGO Mobility Ecosystem MVP** have been implemented, tested, and validated according to the blueprint.
 
 ---
 

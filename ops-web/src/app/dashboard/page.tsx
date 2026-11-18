@@ -42,7 +42,7 @@ export default function DashboardPage() {
       <main className="mx-auto max-w-7xl space-y-6">
         <header>
           <h1 className="text-2xl font-bold text-white">Operations dashboard</h1>
-          <p className="mt-1 text-sm text-slate-400">Live counts from the authoritative 2GO backend.</p>
+          <p className="mt-1 text-sm text-slate-400">Live counts from the authoritative DEGO backend.</p>
         </header>
         {error && <p role="alert" className="rounded-lg border border-rose-700/50 bg-rose-950/40 p-3 text-sm text-rose-200">{error}</p>}
         {!data && !error && <p className="text-sm text-slate-400">Loading operations data…</p>}

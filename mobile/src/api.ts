@@ -681,7 +681,7 @@ export async function geocodeAddress(address: string): Promise<MapCoordinate> {
     {
       headers: {
         "Accept-Language": "en",
-        "User-Agent": "2GO-Mobile/1.0",
+        "User-Agent": "DEGO-Mobile/1.0",
       },
     },
   );
@@ -709,7 +709,7 @@ export async function searchLocationSuggestions(
     {
       headers: {
         "Accept-Language": "en",
-        "User-Agent": "2GO-Mobile/1.0",
+        "User-Agent": "DEGO-Mobile/1.0",
       },
     },
   );
@@ -744,7 +744,7 @@ export async function reverseGeocode(
     {
       headers: {
         "Accept-Language": "en",
-        "User-Agent": "2GO-Mobile/1.0",
+        "User-Agent": "DEGO-Mobile/1.0",
       },
     },
   );

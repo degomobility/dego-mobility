@@ -285,7 +285,7 @@ export function RentalsHomeScreen() {
       >
         <View style={styles.header}>
           <View>
-            <Text style={styles.eyebrow}>2GO MOBILITY</Text>
+            <Text style={styles.eyebrow}>DEGO MOBILITY</Text>
             <Text style={styles.title}>Auto rentals</Text>
             <Text style={styles.subtitle}>Choose a car, dates and how you want to travel.</Text>
           </View>

@@ -407,7 +407,7 @@ export function DriverHomeScreen({
                 : "Loading trip details..."}
             </Text>
 
-            <PersonCard name={offerTrip?.customerId?.userId?.name || "Your rider"} detail="2Go passenger"/>
+            <PersonCard name={offerTrip?.customerId?.userId?.name || "Your rider"} detail="DEGO passenger"/>
             <RouteCard pickup={offerTrip?.pickup.address || "Loading pickup..."} destination={offerTrip?.destination.address || "Loading destination..."}/>
             <View style={styles.actionRow}>
               <TouchableOpacity

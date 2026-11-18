@@ -60,7 +60,7 @@ export const createApp = (): Express => {
         uptime: process.uptime(),
         environment: env.NODE_ENV,
       },
-      "2GO Authoritative API is healthy",
+      "DEGO Authoritative API is healthy",
     );
   });
 

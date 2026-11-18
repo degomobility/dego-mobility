@@ -89,7 +89,7 @@ export default function RentalAgencyApplicationPage() {
     <main className="min-h-screen bg-slate-950 px-5 py-12 text-slate-100">
       <div className="mx-auto max-w-3xl">
         <Link href="/" className="text-sm font-bold text-cyan-300 hover:text-cyan-200">
-          ← Back to 2GO
+          ← Back to DEGO
         </Link>
         <div className="mt-8 rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-2xl sm:p-9">
           <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">

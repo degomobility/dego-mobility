@@ -15,9 +15,9 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata = {
-  title: "2GO Operations Console — Mobility Command Center",
+  title: "DEGO Operations Console — Mobility Command Center",
   description:
-    "Authoritative operations console for 2GO fleet, driver onboarding, trips, dispatch, and monitoring",
+    "Authoritative operations console for DEGO fleet, driver onboarding, trips, dispatch, and monitoring",
 };
 
 export default function RootLayout({

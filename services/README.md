@@ -1,4 +1,4 @@
-# 2GO Domain Services
+# DEGO Domain Services
 
 The ride-share API in `backend/` remains the identity and ride-hailing service.
 The following services are separate Node.js/Express/TypeScript applications:
@@ -127,7 +127,7 @@ clients do not enforce browser CORS.
    vehicle, driver, and hourly/daily/weekly rate submissions.
 3. Operations can also create an approved agency directly in the rentals
    console. Leave the partner user ID blank to make it Operations-managed; this
-   supports 2GO-owned inventory or agencies without a partner account. Operations
+   supports DEGO-owned inventory or agencies without a partner account. Operations
    can add active vehicles and active rates for any approved agency. Partner
    submissions continue to require Operations review. Only active listings from
    approved agencies with an active rate are visible to customers.

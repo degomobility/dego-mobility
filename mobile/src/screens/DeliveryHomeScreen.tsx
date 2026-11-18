@@ -309,7 +309,7 @@ export function DeliveryHomeScreen() {
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.heading}>
-        <Text style={styles.eyebrow}>2GO COURIER</Text>
+        <Text style={styles.eyebrow}>DEGO COURIER</Text>
         <Text style={styles.title}>Send a parcel</Text>
         <Text style={styles.subtitle}>Book a pickup and follow delivery progress from your phone.</Text>
       </View>

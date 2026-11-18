@@ -1,7 +1,7 @@
 {
   "name": "2go-backend",
   "version": "1.0.0",
-  "description": "2GO Mobility Ecosystem Authoritative Backend API & Real-time Engine",
+  "description": "DEGO Mobility Ecosystem Authoritative Backend API & Real-time Engine",
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",

@@ -97,7 +97,7 @@ const startServer = async () => {
     // 4. Start listening
     server.listen(env.PORT, () => {
       logger.info(
-        `🚀 2GO Authoritative Backend running in ${env.NODE_ENV} mode on port ${env.PORT}`,
+        `🚀 DEGO Authoritative Backend running in ${env.NODE_ENV} mode on port ${env.PORT}`,
       );
       logger.info(
         `📡 Healthcheck available at: http://localhost:${env.PORT}/health`,

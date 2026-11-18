@@ -204,7 +204,7 @@ export function MoversHomeScreen({ user }: { user: AuthUser }) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Text style={styles.eyebrow}>2GO MOBILITY</Text>
+          <Text style={styles.eyebrow}>DEGO MOBILITY</Text>
           <Text style={styles.title}>Moving made easier</Text>
           <Text style={styles.subtitle}>Tell us what you need moved. Compare vehicle and crew quotes from approved agencies.</Text>
         </View>

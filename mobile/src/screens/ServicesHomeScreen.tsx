@@ -37,7 +37,7 @@ const services: {
   },
   {
     key: "shopping",
-    title: "Shop 2Go",
+    title: "Shop DEGO",
     description: "Shop local stores from one place.",
     icon: "▤",
     label: "COMING SOON",
@@ -136,7 +136,7 @@ export function ServicesHomeScreen({
     <View style={styles.content}>
         <View style={styles.header}>
           <View style={styles.brand}>
-            <Text style={styles.brandName}>2Go</Text>
+            <Text style={styles.brandName}>DEGO</Text>
             <Text style={styles.brandDivider}>·</Text>
             <Text style={styles.brandPortal}>SERVICES PORTAL</Text>
           </View>
@@ -189,7 +189,7 @@ export function ServicesHomeScreen({
             <Text style={styles.searchIcon}>⌕</Text>
           </View>
           <Text style={styles.searchPlaceholder}>
-            Where can 2Go take or bring you?
+            Where can DEGO take or bring you?
           </Text>
           <View style={styles.micWrap}>
             <Text style={styles.micIcon}>⌁</Text>
@@ -279,7 +279,7 @@ export function ServicesHomeScreen({
           <View style={styles.infoCopy}>
             <Text style={styles.infoTitle}>More ways to go, all in one app</Text>
             <Text style={styles.infoDescription}>
-              Book rides, send a parcel, plan a relocation, or find a rental vehicle with 2Go.
+              Book rides, send a parcel, plan a relocation, or find a rental vehicle with DEGO.
             </Text>
           </View>
         </View>

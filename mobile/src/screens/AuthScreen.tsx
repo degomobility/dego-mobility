@@ -54,7 +54,7 @@ export function AuthScreen({ onAuthenticated }: AuthScreenProps) {
           <Text style={styles.brandMarkText}>2</Text>
         </View>
         <View style={styles.brandCopy}>
-          <Text style={styles.logo}>2Go</Text>
+          <Text style={styles.logo}>DEGO</Text>
           <Text style={styles.brandLine}>Precision Urban Mobility</Text>
         </View>
         <View style={styles.onlinePill}>
@@ -78,11 +78,11 @@ export function AuthScreen({ onAuthenticated }: AuthScreenProps) {
           {isRegistering ? "CREATE YOUR ACCOUNT" : "WELCOME BACK"}
         </Text>
         <Text style={styles.title}>
-          {isRegistering ? "Start moving" : "Sign in to 2GO"}
+          {isRegistering ? "Start moving" : "Sign in to DEGO"}
         </Text>
         <Text style={styles.subtitle}>
           {isRegistering
-            ? "Choose how you will use 2GO."
+            ? "Choose how you will use DEGO."
             : role === "DRIVER" ? "Sign in to your driver account." : "Your next ride starts here."}
         </Text>
         {isRegistering && (
@@ -170,11 +170,11 @@ export function AuthScreen({ onAuthenticated }: AuthScreenProps) {
           <Text style={styles.switchText}>
             {isRegistering
               ? "Already have an account? Sign in"
-              : "New to 2GO? Create an account"}
+              : "New to DEGO? Create an account"}
           </Text>
         </TouchableOpacity>
         <Text style={styles.legal}>
-          By signing up or logging in, you agree to the 2Go Terms of Service and
+          By signing up or logging in, you agree to the DEGO Terms of Service and
           acknowledge our Privacy Policy.
         </Text>
       </View>

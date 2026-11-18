@@ -134,7 +134,7 @@ export function OpsConsoleShell({ children }: { children: React.ReactNode }) {
           className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-7 shadow-xl"
         >
           <div className="mb-7">
-            <div className="text-2xl font-black text-white">2GO Operations</div>
+            <div className="text-2xl font-black text-white">DEGO Operations</div>
             <p className="mt-2 text-sm text-slate-400">
               Sign in with your assigned Operations account.
             </p>
@@ -174,7 +174,7 @@ export function OpsConsoleShell({ children }: { children: React.ReactNode }) {
             {isSigningIn ? "Signing in..." : "Sign in"}
           </button>
           <p className="mt-4 text-xs leading-5 text-slate-500">
-            Identity and permissions are checked by the main 2GO backend.
+            Identity and permissions are checked by the main DEGO backend.
           </p>
           <Link
             href="/rentals/apply"
@@ -201,7 +201,7 @@ export function OpsConsoleShell({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <h1 className="font-bold text-lg leading-tight tracking-tight text-white">
-                2GO Operations
+                DEGO Operations
               </h1>
               <p className="text-xs text-emerald-400 font-medium flex items-center gap-1.5 mt-0.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -251,7 +251,7 @@ export function OpsConsoleShell({ children }: { children: React.ReactNode }) {
             {currentRoleConfig.description}
           </p>
           <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500">
-            <span>2GO Authoritative API</span>
+            <span>DEGO Authoritative API</span>
             <span className="text-emerald-400 font-mono">v1.0-online</span>
           </div>
         </div>

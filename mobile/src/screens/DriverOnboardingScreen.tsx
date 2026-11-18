@@ -227,7 +227,7 @@ export function DriverOnboardingScreen({
     >
       <ScrollView contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
         <View style={styles.panel}>
-          <Text style={styles.kicker}>2GO DRIVER PARTNER</Text>
+          <Text style={styles.kicker}>DEGO DRIVER PARTNER</Text>
           <Text style={styles.title}>Complete your driver profile</Text>
           <Text style={styles.muted}>We’ll review your identity, licence and vehicle before activating your driver account.</Text>
 

@@ -121,7 +121,7 @@ function MapSurface({
             <Marker
               key={driver.driverId}
               coordinate={{ latitude, longitude }}
-              title={driver.name || "2GO driver"}
+              title={driver.name || "DEGO driver"}
               description={driver.category || "Available nearby"}
             >
               <View style={styles.nearbyVehicleMarker}>
@@ -925,7 +925,7 @@ export function CustomerHomeScreen({
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.rideName}>
-                      2Go {cat[0] + cat.slice(1).toLowerCase()}
+                      DEGO {cat[0] + cat.slice(1).toLowerCase()}
                     </Text>
                     <Text style={styles.rideMeta}>
                       {etaMinutes ? `${etaMinutes} min` : "Route pending"} away
@@ -961,7 +961,7 @@ export function CustomerHomeScreen({
               disabled={!estimate}
             >
               <Text style={styles.primaryButtonText}>
-                Confirm 2Go {category[0] + category.slice(1).toLowerCase()} ·{" "}
+                Confirm DEGO {category[0] + category.slice(1).toLowerCase()} ·{" "}
                 {estimate
                   ? `${estimate.currency} ${Math.round(estimate.estimatedFare).toLocaleString()}`
                   : "Calculating..."}
@@ -1037,7 +1037,7 @@ export function CustomerHomeScreen({
 
         {tripState === "COMPLETED" && (
           <ScrollView style={rideSheetStyle} contentContainerStyle={styles.sheet} showsVerticalScrollIndicator={false}>
-            <View style={ui.success}><Text style={ui.check}>✓</Text><Text style={ui.label}>TRIP COMPLETED</Text><Text style={ui.successTitle}>You have arrived!</Text><Text style={ui.muted}>Thank you for riding with 2Go.</Text></View><RouteCard pickup={pickup} destination={destination}/><PersonCard name={trip?.driverId?.userId?.name || "Your driver"} detail="Rate your trip"/>
+            <View style={ui.success}><Text style={ui.check}>✓</Text><Text style={ui.label}>TRIP COMPLETED</Text><Text style={ui.successTitle}>You have arrived!</Text><Text style={ui.muted}>Thank you for riding with DEGO.</Text></View><RouteCard pickup={pickup} destination={destination}/><PersonCard name={trip?.driverId?.userId?.name || "Your driver"} detail="Rate your trip"/>
             <Text style={styles.fare}>
               RWF{" "}
               {Math.round(
@@ -1122,7 +1122,7 @@ export function CustomerHomeScreen({
                 <View style={styles.historyHeader}>
                   <View>
                     <Text style={styles.historyDate}>{new Date(historyTrip.timestamps?.requestedAt || historyTrip.createdAt || Date.now()).toLocaleDateString()}</Text>
-                    <Text style={styles.historyCategory}>2Go {historyTrip.category.toLowerCase()}</Text>
+                    <Text style={styles.historyCategory}>DEGO {historyTrip.category.toLowerCase()}</Text>
                   </View>
                   <View style={[styles.statusPill, historyTrip.status === "CANCELLED" && styles.statusPillCancelled]}>
                     <Text style={[styles.statusPillText, historyTrip.status === "CANCELLED" && styles.statusPillTextCancelled]}>{historyTrip.status.replaceAll("_", " ")}</Text>

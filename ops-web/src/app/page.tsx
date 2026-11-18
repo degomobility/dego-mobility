@@ -36,12 +36,12 @@ const heroImage =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuAcj5rRBb_xw5d5ALIItS7NLz-JykqOSmNqla5u3RFtbrdyzkArgesLg9M9GiqUwC6WMbfg0ywvj3yW3XY4QOY6r6IDzPHAHJl8QiIz7YxMzxgpA5dmH-44TJNx5XcQSm1X7eNJAZJ2LCcVxCsaHY2y8WM4aMCL7s2AKGOlXHAQzI2eFJkO_SKP_vob30nBDy08S6j8MYX3z6uvIL2DwHQVkqdfRq-daapJNb7o6jL0DBvj0KXeeBN0Wg";
 
 export const metadata: Metadata = {
-  title: "2Go | Rides, delivery and everyday mobility",
+  title: "DEGO | Rides, delivery and everyday mobility",
   description:
-    "Move around Kigali with 2Go. Request a ride, send a delivery, or join the driver network from one simple platform.",
-  applicationName: "2Go",
+    "Move around Kigali with DEGO. Request a ride, send a delivery, or join the driver network from one simple platform.",
+  applicationName: "DEGO",
   keywords: [
-    "2Go",
+    "DEGO",
     "Kigali rides",
     "Rwanda ride hailing",
     "Kigali delivery",
@@ -50,15 +50,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_RW",
-    siteName: "2Go",
-    title: "2Go | Rides, delivery and everyday mobility",
+    siteName: "DEGO",
+    title: "DEGO | Rides, delivery and everyday mobility",
     description:
       "Rides, deliveries and local mobility, connected in one platform for Kigali.",
     images: [{ url: heroImage, alt: "A modern electric car on a city street" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "2Go | Rides, delivery and everyday mobility",
+    title: "DEGO | Rides, delivery and everyday mobility",
     description:
       "Rides, deliveries and local mobility, connected in one platform for Kigali.",
     images: [heroImage],
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
 
 const services = [
   {
-    title: "2Go Rides: Urban Transit Redefined",
+    title: "DEGO Rides: Urban Transit Redefined",
     description:
       "Pick & drop point navigation, fully electrified modern fleets, executive comfort for enterprise commuters, and transparent upfront fare calculations with zero hidden multipliers.",
     icon: CarFront,
@@ -87,7 +87,7 @@ const services = [
     link: "Book courier",
   },
   {
-    title: "Shop 2Go Direct",
+    title: "Shop DEGO Direct",
     description:
       "Flash grocery, late-night pharmacy essentials, organic markets, and boutique electronics delivered to your door in under 30 minutes.",
     icon: ShoppingBag,
@@ -125,16 +125,16 @@ export default function HomePage() {
         >
           <Link
             href="#home"
-            aria-label="2Go home"
+            aria-label="DEGO home"
             className="flex items-center gap-space-md"
           >
             <img
-              alt="2Go"
+              alt="DEGO logo"
               className="h-8 w-auto object-contain"
               src="https://lh3.googleusercontent.com/aida/AEtjO1VN-LCbS9pM3f5T3tAn4GxdWRPKNiUP4Fz4LM0N96hdRW1zg98MSp5XQKxclqfNa2h6J0vG_SG5xHQZ6zNQ3HE66M3fr5w2aSNOORsKTn1CsCot_MKfQUr7ABADufHvi9rn9bbXbEYIufLHa3NPdwAb83UMELEXWJWmNEeOi-LA3spgczt2rrIghfyB7HT_36vZet219LpQywRDlOWsptmEPNj2QhbX6oVwVQhw6M0ZnEx_3ZnJyIHZJkk"
             />
             <span className="font-headline-sm text-headline-sm tracking-tight text-on-surface">
-              2Go
+              DEGO
             </span>
           </Link>
 
@@ -208,7 +208,7 @@ export default function HomePage() {
               Your city, <span className="text-cyan-300">in motion.</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
-              One simple way to move, send, and get what you need. 2Go brings
+              One simple way to move, send, and get what you need. DEGO brings
               everyday city services together, right from your phone.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
@@ -222,7 +222,7 @@ export default function HomePage() {
                 className="inline-flex h-12 items-center gap-2 rounded-lg border border-white/20 px-5 font-semibold text-white transition hover:border-white/50 hover:bg-white/5"
                 href="/onboarding"
               >
-                Drive with 2Go <ArrowRight aria-hidden="true" size={17} />
+                Drive with DEGO <ArrowRight aria-hidden="true" size={17} />
               </Link>
             </div>
             <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-sm text-slate-400">
@@ -281,7 +281,7 @@ export default function HomePage() {
 
         <section
           className="w-full bg-surface-container-low py-10 shadow-inner"
-          aria-label="2Go service metrics"
+          aria-label="DEGO service metrics"
         >
           <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-6 text-center lg:px-margin-desktop md:grid-cols-4">
             {[
@@ -498,7 +498,7 @@ export default function HomePage() {
                   Engineered for absolute rider peace of mind.
                 </h2>
                 <p className="font-body-md text-body-md leading-relaxed text-on-surface-variant">
-                  Every 2Go trip is protected by active telemetry, real-time
+                  Every DEGO trip is protected by active telemetry, real-time
                   route deviation monitors, and mandatory multi-factor
                   confirmation before ignition.
                 </p>
@@ -562,7 +562,7 @@ export default function HomePage() {
                       aria-hidden="true"
                     />
                     <span className="font-label-sm text-label-sm uppercase text-secondary">
-                      Drive &amp; Earn With 2Go
+                      Drive &amp; Earn With DEGO
                     </span>
                   </div>
                   <h3 className="font-headline-lg text-headline-lg font-semibold text-on-surface">
@@ -624,7 +624,7 @@ export default function HomePage() {
         </section>
 
         <section
-          aria-label="2Go in the city"
+          aria-label="DEGO in the city"
           className="mx-auto max-w-7xl px-6 py-16 lg:px-margin-desktop"
         >
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -699,7 +699,7 @@ export default function HomePage() {
                     aria-hidden="true"
                   />
                   <span className="font-label-sm text-label-sm uppercase text-primary">
-                    Download 2Go Mobile
+                    Download DEGO Mobile
                   </span>
                 </div>
                 <h2 className="font-display-lg text-display-lg text-on-surface">
@@ -802,7 +802,7 @@ export default function HomePage() {
                   2G
                 </span>
                 <span className="font-headline-sm text-headline-sm text-on-surface">
-                  2Go
+                  DEGO
                 </span>
               </Link>
               <p className="max-w-sm font-body-md text-body-md text-on-surface-variant">
@@ -926,7 +926,7 @@ export default function HomePage() {
           <div className="flex flex-col items-center justify-between gap-space-md pt-space-lg font-body-sm text-body-sm md:flex-row">
             <div className="flex flex-wrap items-center gap-space-md text-on-surface-variant">
               <p>
-                © 2025 2Go Urban Mobility Technologies Inc. All rights reserved.
+                © 2025 DEGO Urban Mobility Technologies Inc. All rights reserved.
               </p>
               <Link
                 className="transition-colors hover:text-on-surface"

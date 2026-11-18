@@ -70,7 +70,7 @@ async function activateTestDriver(
   await driver.save();
 }
 
-describe("2GO Full Ride-Hailing Vertical Slice Lifecycle E2E", () => {
+describe("DEGO Full Ride-Hailing Vertical Slice Lifecycle E2E", () => {
   it("should successfully execute entire ride lifecycle: Auth -> Online -> Estimate -> Dispatch -> Arrive -> Start -> Stream -> Complete -> Pay -> Rate -> Ops Dashboard", async () => {
     // 0. Seed pricing rules
     await PricingRule.create({
