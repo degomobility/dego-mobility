@@ -38,6 +38,11 @@ export const updateVehicleStatusSchema = z.object({
   body: z.object({ status: z.nativeEnum(VehicleStatus) }),
 });
 
+export const assignVehicleSchema = z.object({
+  params: z.object({ id: objectId }),
+  body: z.object({ driverId: objectId.nullable() }),
+});
+
 export const manualAssignSchema = z.object({
   params: z.object({ id: objectId }),
   body: z.object({ driverId: objectId }),

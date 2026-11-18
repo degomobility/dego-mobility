@@ -8,6 +8,7 @@ import {
   updateUserStatusSchema,
   createVehicleSchema,
   updateVehicleStatusSchema,
+  assignVehicleSchema,
   manualAssignSchema,
   deliveryDriverLockSchema,
 } from './admin.validation';
@@ -27,6 +28,7 @@ router.post('/users', requirePermissions(Permission.USER_MANAGE), validate(creat
 router.patch('/users/:id/status', requirePermissions(Permission.USER_MANAGE), validate(updateUserStatusSchema), AdminController.updateUserStatus);
 router.post('/vehicles', requirePermissions(Permission.FLEET_MANAGE), validate(createVehicleSchema), AdminController.createVehicle);
 router.patch('/vehicles/:id/status', requirePermissions(Permission.FLEET_MANAGE), validate(updateVehicleStatusSchema), AdminController.updateVehicleStatus);
+router.patch('/vehicles/:id/driver', requirePermissions(Permission.FLEET_MANAGE), validate(assignVehicleSchema), AdminController.assignVehicle);
 router.post('/trips/:id/assign', requirePermissions(Permission.DISPATCH_EXECUTE), validate(manualAssignSchema), AdminController.manualAssign);
 
 export default router;

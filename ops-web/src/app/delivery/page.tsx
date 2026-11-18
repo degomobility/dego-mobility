@@ -2,6 +2,7 @@
 
 import React, { FormEvent, useCallback, useEffect, useState } from "react";
 import { PermissionGate } from "../../components/PermissionGate";
+import { PaginationControls, usePagination } from "../../components/Pagination";
 import { deliveryRequest } from "../../lib/api";
 import { Permission } from "../../lib/types";
 
@@ -60,6 +61,7 @@ function DeliveryOperationsPage() {
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const pagination = usePagination(orders);
 
   const loadData = useCallback(async () => {
     setError("");
@@ -202,7 +204,7 @@ function DeliveryOperationsPage() {
           </div>
           {loading ? <p className="rounded-xl border border-slate-800 bg-slate-900 p-5 text-sm text-slate-400">Loading delivery requests…</p> : orders.length === 0 ? (
             <p className="rounded-xl border border-slate-800 bg-slate-900 p-5 text-sm text-slate-400">No delivery requests have been placed.</p>
-          ) : orders.map((order) => {
+          ) : pagination.items.map((order) => {
             const canAssign = order.status === "REQUESTED" || order.status === "ASSIGNED";
             const canCancel = !["DELIVERED", "CANCELLED"].includes(order.status);
             return (
@@ -221,7 +223,7 @@ function DeliveryOperationsPage() {
                 <div className="mt-3 grid gap-2 text-xs text-slate-300 sm:grid-cols-2">
                   <p>{order.packageType}: {order.packageDescription}{order.fragile ? " · Fragile" : ""}</p>
                   <p>Courier: {order.driverName || "Not assigned"}</p>
-                  {order.driverLocation && <p>Last location: {order.driverLocation.coordinates[1].toFixed(5)}, {order.driverLocation.coordinates[0].toFixed(5)} · {new Date(order.driverLocation.updatedAt).toLocaleTimeString()}</p>}
+                  {order.driverLocation && order.driverLocation.coordinates.length === 2 && <p>Last location: {order.driverLocation.coordinates[1].toFixed(5)}, {order.driverLocation.coordinates[0].toFixed(5)} · {new Date(order.driverLocation.updatedAt).toLocaleTimeString()}</p>}
                   {order.notes && <p>Instructions: {order.notes}</p>}
                   <p>Payment: {order.paymentStatus}{order.paymentMethod ? ` · ${order.paymentMethod}` : ""}{order.rating ? ` · ${order.rating.score}/5 rating` : ""}</p>
                 </div>
@@ -259,6 +261,11 @@ function DeliveryOperationsPage() {
               </article>
             );
           })}
+          {!loading && orders.length > 0 && (
+            <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900">
+              <PaginationControls {...pagination} onPageChange={pagination.setPage} onPageSizeChange={pagination.setPageSize} />
+            </div>
+          )}
         </section>
 
         <section className="rounded-xl border border-slate-800 bg-slate-900 p-5">

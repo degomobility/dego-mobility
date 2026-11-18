@@ -29,6 +29,14 @@
     "plugins": [
       "expo-secure-store",
       [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 24
+          }
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/icon.png",
@@ -36,7 +44,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#0f172a"
         }
-      ]
+      ],
+      "expo-build-properties"
     ]
   }
 }

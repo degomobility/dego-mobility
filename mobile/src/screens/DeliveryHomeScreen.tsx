@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Keyboard,
   Linking,
   ScrollView,
   StyleSheet,
@@ -16,10 +17,12 @@ import {
   DeliveryEstimate,
   DeliveryOrder,
   DeliveryPackageType,
+  LocationSuggestion,
+  MapCoordinate,
   estimateDelivery,
-  geocodeAddress,
   getMyDeliveries,
   rateDelivery,
+  searchLocationSuggestions,
 } from "../api";
 
 const colors = {
@@ -80,9 +83,71 @@ function Field({
   );
 }
 
+function AddressField({
+  label,
+  value,
+  placeholder,
+  suggestions,
+  searching,
+  onFocus,
+  onChangeText,
+  onSelectSuggestion,
+}: {
+  label: string;
+  value: string;
+  placeholder: string;
+  suggestions: LocationSuggestion[];
+  searching: boolean;
+  onFocus: () => void;
+  onChangeText: (value: string) => void;
+  onSelectSuggestion: (suggestion: LocationSuggestion) => void;
+}) {
+  return (
+    <View style={styles.field}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        value={value}
+        onFocus={onFocus}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        placeholderTextColor="#65747b"
+        autoCorrect={false}
+        returnKeyType="search"
+        style={styles.input}
+      />
+      {searching && <Text style={styles.searchHint}>Searching nearby addresses…</Text>}
+      {suggestions.length > 0 && (
+        <ScrollView
+          style={styles.suggestions}
+          nestedScrollEnabled
+          keyboardShouldPersistTaps="always"
+          showsVerticalScrollIndicator
+        >
+          {suggestions.map((suggestion) => (
+            <TouchableOpacity
+              key={suggestion.id}
+              accessibilityRole="button"
+              onPress={() => onSelectSuggestion(suggestion)}
+              style={styles.suggestion}
+            >
+              <Text style={styles.suggestionIcon}>⌖</Text>
+              <Text style={styles.suggestionText} numberOfLines={2}>{suggestion.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
+    </View>
+  );
+}
+
 export function DeliveryHomeScreen() {
   const [pickupAddress, setPickupAddress] = useState("");
   const [destinationAddress, setDestinationAddress] = useState("");
+  const [pickupCoordinate, setPickupCoordinate] = useState<MapCoordinate | null>(null);
+  const [destinationCoordinate, setDestinationCoordinate] = useState<MapCoordinate | null>(null);
+  const [activeAddressField, setActiveAddressField] = useState<"pickup" | "destination" | null>(null);
+  const [addressSuggestions, setAddressSuggestions] = useState<LocationSuggestion[]>([]);
+  const [searchingAddresses, setSearchingAddresses] = useState(false);
   const [recipientName, setRecipientName] = useState("");
   const [recipientPhone, setRecipientPhone] = useState("");
   const [packageDescription, setPackageDescription] = useState("");
@@ -95,6 +160,38 @@ export function DeliveryHomeScreen() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState("");
   const [ratingDrafts, setRatingDrafts] = useState<Record<string, number>>({});
+
+  const activeAddress = activeAddressField === "pickup" ? pickupAddress : destinationAddress;
+  const activeCoordinate = activeAddressField === "pickup" ? pickupCoordinate : destinationCoordinate;
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!activeAddressField || activeCoordinate || activeAddress.trim().length < 3) {
+      setAddressSuggestions([]);
+      setSearchingAddresses(false);
+      return () => { cancelled = true; };
+    }
+
+    setAddressSuggestions([]);
+    setSearchingAddresses(true);
+    const timer = setTimeout(() => {
+      void searchLocationSuggestions(activeAddress).then((suggestions) => {
+        if (!cancelled) setAddressSuggestions(suggestions);
+      }).catch((searchError: unknown) => {
+        if (!cancelled) {
+          setAddressSuggestions([]);
+          setError(searchError instanceof Error ? searchError.message : "Unable to search addresses.");
+        }
+      }).finally(() => {
+        if (!cancelled) setSearchingAddresses(false);
+      });
+    }, 350);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [activeAddress, activeAddressField, activeCoordinate]);
 
   const loadOrders = useCallback(async () => {
     try {
@@ -115,13 +212,12 @@ export function DeliveryHomeScreen() {
     setBusy("estimate");
     setEstimate(null);
     try {
-      const [pickup, destination] = await Promise.all([
-        geocodeAddress(pickupAddress),
-        geocodeAddress(destinationAddress),
-      ]);
+      if (!pickupCoordinate || !destinationCoordinate) {
+        throw new Error("Choose both pickup and destination from the address suggestions for an accurate estimate.");
+      }
       const result = await estimateDelivery({
-        pickupCoordinates: [pickup.longitude, pickup.latitude],
-        destinationCoordinates: [destination.longitude, destination.latitude],
+        pickupCoordinates: [pickupCoordinate.longitude, pickupCoordinate.latitude],
+        destinationCoordinates: [destinationCoordinate.longitude, destinationCoordinate.latitude],
         weightKg: Number(weightKg),
       });
       setEstimate(result);
@@ -136,17 +232,16 @@ export function DeliveryHomeScreen() {
     setError("");
     setBusy("submit");
     try {
-      const [pickup, destination] = await Promise.all([
-        geocodeAddress(pickupAddress),
-        geocodeAddress(destinationAddress),
-      ]);
+      if (!pickupCoordinate || !destinationCoordinate) {
+        throw new Error("Choose both pickup and destination from the address suggestions.");
+      }
       const order = await createDelivery({
         recipientName: recipientName.trim(),
         recipientPhone: recipientPhone.trim(),
         pickupAddress: pickupAddress.trim(),
-        pickupCoordinates: [pickup.longitude, pickup.latitude],
+        pickupCoordinates: [pickupCoordinate.longitude, pickupCoordinate.latitude],
         destinationAddress: destinationAddress.trim(),
-        destinationCoordinates: [destination.longitude, destination.latitude],
+        destinationCoordinates: [destinationCoordinate.longitude, destinationCoordinate.latitude],
         packageType,
         packageDescription: packageDescription.trim(),
         weightKg: Number(weightKg),
@@ -157,6 +252,8 @@ export function DeliveryHomeScreen() {
       setEstimate(null);
       setPickupAddress("");
       setDestinationAddress("");
+      setPickupCoordinate(null);
+      setDestinationCoordinate(null);
       setRecipientName("");
       setRecipientPhone("");
       setPackageDescription("");
@@ -197,8 +294,8 @@ export function DeliveryHomeScreen() {
   }
 
   const readyToEstimate =
-    pickupAddress.trim().length > 2 &&
-    destinationAddress.trim().length > 2 &&
+    !!pickupCoordinate &&
+    !!destinationCoordinate &&
     Number(weightKg) >= 0.1 &&
     Number(weightKg) <= 100;
 
@@ -206,7 +303,9 @@ export function DeliveryHomeScreen() {
     <ScrollView
       style={styles.screen}
       contentContainerStyle={styles.content}
+      nestedScrollEnabled
       keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.heading}>
@@ -219,9 +318,53 @@ export function DeliveryHomeScreen() {
 
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>Route</Text>
-        <Field label="Pickup address" value={pickupAddress} onChangeText={(value) => { setPickupAddress(value); setEstimate(null); }} placeholder="Street, building, neighbourhood" />
-        <Field label="Destination address" value={destinationAddress} onChangeText={(value) => { setDestinationAddress(value); setEstimate(null); }} placeholder="Where should we deliver it?" />
-        <Text style={styles.helper}>Enter recognizable addresses. The fare estimate uses map coordinates and the current Operations tariff.</Text>
+        <AddressField
+          label="Pickup address"
+          value={pickupAddress}
+          placeholder="Start typing a street, place, or landmark"
+          suggestions={activeAddressField === "pickup" ? addressSuggestions : []}
+          searching={activeAddressField === "pickup" && searchingAddresses}
+          onFocus={() => setActiveAddressField("pickup")}
+          onChangeText={(value) => {
+            setPickupAddress(value);
+            setPickupCoordinate(null);
+            setEstimate(null);
+            setError("");
+            setActiveAddressField("pickup");
+          }}
+          onSelectSuggestion={(suggestion) => {
+            setPickupAddress(suggestion.label);
+            setPickupCoordinate(suggestion.coordinate);
+            setAddressSuggestions([]);
+            setActiveAddressField(null);
+            Keyboard.dismiss();
+            setEstimate(null);
+          }}
+        />
+        <AddressField
+          label="Drop-off address"
+          value={destinationAddress}
+          placeholder="Start typing the delivery destination"
+          suggestions={activeAddressField === "destination" ? addressSuggestions : []}
+          searching={activeAddressField === "destination" && searchingAddresses}
+          onFocus={() => setActiveAddressField("destination")}
+          onChangeText={(value) => {
+            setDestinationAddress(value);
+            setDestinationCoordinate(null);
+            setEstimate(null);
+            setError("");
+            setActiveAddressField("destination");
+          }}
+          onSelectSuggestion={(suggestion) => {
+            setDestinationAddress(suggestion.label);
+            setDestinationCoordinate(suggestion.coordinate);
+            setAddressSuggestions([]);
+            setActiveAddressField(null);
+            Keyboard.dismiss();
+            setEstimate(null);
+          }}
+        />
+        <Text style={styles.helper}>Choose a suggested address for precise map coordinates and distance-based pricing.</Text>
       </View>
 
       <View style={styles.card}>
@@ -338,7 +481,7 @@ export function DeliveryHomeScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-  content: { padding: 16, paddingBottom: 28, gap: 12 },
+  content: { padding: 16, paddingBottom: 112, gap: 12 },
   heading: { paddingTop: 4, paddingBottom: 2 },
   eyebrow: { color: colors.accent, fontSize: 10, fontWeight: "900", letterSpacing: 1.4 },
   title: { color: colors.text, fontSize: 26, fontWeight: "900", marginTop: 5 },
@@ -346,6 +489,11 @@ const styles = StyleSheet.create({
   card: { borderWidth: 1, borderColor: colors.line, backgroundColor: colors.panel, borderRadius: 16, padding: 14, gap: 10 },
   sectionTitle: { color: colors.text, fontSize: 15, fontWeight: "800", marginBottom: 2 },
   field: { gap: 5 },
+  searchHint: { color: colors.muted, fontSize: 10, paddingHorizontal: 2 },
+  suggestions: { maxHeight: 190, borderWidth: 1, borderColor: "#34434a", borderRadius: 10, backgroundColor: "#10191e" },
+  suggestion: { minHeight: 44, flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 11, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: colors.line },
+  suggestionIcon: { color: colors.accent, fontSize: 17 },
+  suggestionText: { flex: 1, color: colors.text, fontSize: 11, lineHeight: 16 },
   label: { color: "#b5c3c8", fontSize: 11, fontWeight: "700" },
   input: { minHeight: 46, borderWidth: 1, borderColor: "#34434a", borderRadius: 10, backgroundColor: "#0d1418", paddingHorizontal: 12, color: colors.text, fontSize: 13 },
   multiline: { minHeight: 74, paddingTop: 11 },

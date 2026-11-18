@@ -6,6 +6,7 @@ import { LiveTripChatModal } from '../../components/LiveTripChatModal';
 import { apiRequest } from '../../lib/api';
 import { Permission } from '../../lib/types';
 import { PermissionGate } from '../../components/PermissionGate';
+import { PaginationControls, usePagination } from '../../components/Pagination';
 
 interface OpsTrip {
   _id: string;
@@ -28,6 +29,7 @@ export default function TripsPage() {
   const [trips, setTrips] = useState<OpsTrip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const pagination = usePagination(trips);
 
   useEffect(() => {
     let active = true;
@@ -83,7 +85,7 @@ export default function TripsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60">
-              {trips.map((trip) => (
+              {pagination.items.map((trip) => (
                 <tr key={trip._id} className="hover:bg-slate-800/40 transition">
                   <td className="px-6 py-4 font-semibold text-white">
                     <div className="font-mono text-xs">{trip._id}</div>
@@ -130,6 +132,11 @@ export default function TripsPage() {
             </tbody>
           </table>
         </div>
+        <PaginationControls
+          {...pagination}
+          onPageChange={pagination.setPage}
+          onPageSizeChange={pagination.setPageSize}
+        />
       </div>
 
       {selectedChatTrip && (

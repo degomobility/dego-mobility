@@ -121,10 +121,13 @@ function MapSurface({
             <Marker
               key={driver.driverId}
               coordinate={{ latitude, longitude }}
-              pinColor="#f5a524"
               title={driver.name || "2GO driver"}
               description={driver.category || "Available nearby"}
-            />
+            >
+              <View style={styles.nearbyVehicleMarker}>
+                <Text style={styles.nearbyVehicleIcon}>🚗</Text>
+              </View>
+            </Marker>
           );
         })}
         {assignedDriverLocation && (
@@ -240,6 +243,11 @@ export function CustomerHomeScreen({
 
   useEffect(() => {
     tabScrollRef.current?.scrollTo({ y: 0, animated: false });
+    getActiveTrip()
+      .then((activeTrip) => {
+        if (activeTrip) applyTrip(activeTrip);
+      })
+      .catch(() => undefined);
     if (activeTab === "Activity") loadHistory();
     if (activeTab === "Account" && !profile) {
       getCustomerProfile()
@@ -326,18 +334,10 @@ export function CustomerHomeScreen({
   }
 
   useEffect(() => {
-    getActiveTrip()
-      .then((activeTrip) => {
-        if (activeTrip) applyTrip(activeTrip);
-      })
-      .catch(() => undefined);
-  }, []);
-
-  useEffect(() => {
-    if (!pickupLocation) return;
     let active = true;
+    const mapLocation = pickupLocation || currentLocation || DEFAULT_PICKUP;
     const refresh = () =>
-      getNearbyDrivers(pickupLocation, 10, category)
+      getNearbyDrivers(mapLocation, 10)
         .then((drivers) => {
           if (active) setNearbyDrivers(drivers);
         })
@@ -350,7 +350,7 @@ export function CustomerHomeScreen({
       active = false;
       clearInterval(timer);
     };
-  }, [pickupLocation, category]);
+  }, [pickupLocation, currentLocation]);
 
   useEffect(() => {
     let socket: Awaited<ReturnType<typeof connectSocket>>;
@@ -502,22 +502,6 @@ export function CustomerHomeScreen({
   }, [pickup, destination, pickupLocation, destinationLocation, routedDistanceKm]);
 
   useEffect(() => {
-    if (
-      !trip?._id ||
-      trip.status === "TRIP_COMPLETED" ||
-      trip.status === "CANCELLED"
-    )
-      return;
-    const timer = setInterval(
-      () =>
-        getTrip(trip._id)
-          .then(applyTrip)
-          .catch(() => undefined),
-      3000,
-    );
-    return () => clearInterval(timer);
-  }, [trip?._id, trip?.status]);
-  useEffect(() => {
     if (!trip?._id) return;
     let socket: Awaited<ReturnType<typeof connectSocket>>;
     connectSocket().then((connectedSocket) => {
@@ -547,6 +531,22 @@ export function CustomerHomeScreen({
       socket?.disconnect();
     };
   }, [trip?._id]);
+
+  useEffect(() => {
+    let active = true;
+    const refreshActiveTrip = () => {
+      getActiveTrip()
+        .then((activeTrip) => {
+          if (active && activeTrip) applyTrip(activeTrip);
+        })
+        .catch(() => undefined);
+    };
+    const timer = setInterval(refreshActiveTrip, 5000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, []);
 
   async function requestTrip() {
     setError("");
@@ -650,35 +650,38 @@ export function CustomerHomeScreen({
         : 84,
     },
   ];
-  const locationEditorStyle = [
-    styles.locationEditorSheet,
-    {
-      bottom: keyboardHeight
-        ? Platform.OS === "ios"
-          ? keyboardHeight + 12
-          : 12
-        : 84,
-      maxHeight:
-        keyboardHeight > 0
-          ? Math.min(
-              windowHeight * 0.52,
-              Math.max(200, windowHeight - keyboardHeight - 130),
-            )
-          : windowHeight * 0.52,
-    },
-  ];
-
   return (
     <View style={styles.screen}>
+      {activeTab === "Delivery" ? (
+        <View style={styles.deliveryTab}>
+          <DeliveryHomeScreen />
+        </View>
+      ) : (
       <ScrollView
         ref={tabScrollRef}
         contentContainerStyle={
-          activeTab === "Rides" || activeTab === "Delivery" || activeTab === "Rentals" || activeTab === "Movers" ? styles.rideContent : styles.content
+          activeTab === "Rides" || activeTab === "Rentals" || activeTab === "Movers" ? styles.rideContent : styles.content
         }
-        scrollEnabled={activeTab !== "Rides" && activeTab !== "Delivery" && activeTab !== "Rentals" && activeTab !== "Movers"}
+        scrollEnabled={activeTab !== "Rides" && activeTab !== "Rentals" && activeTab !== "Movers"}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
+        {activeTab !== "Rides" && activeTab !== "Activity" && trip && tripState !== "COMPLETED" && (
+          <View style={styles.activeTripBanner}>
+            <View style={styles.activeTripBannerText}>
+              <Text style={styles.activeTripLabel}>ACTIVE RIDE</Text>
+              <Text style={styles.activeTripBannerTitle}>
+                {trip.status === "SEARCHING_DRIVER" ? "Finding your driver" : "Your ride is active"}
+              </Text>
+            </View>
+            <TouchableOpacity style={styles.activeTripBannerButton} onPress={() => setActiveTab("Rides")}>
+              <Text style={styles.activeTripBannerButtonText}>View</Text>
+            </TouchableOpacity>
+            <TouchableOpacity accessibilityLabel="Cancel active ride" onPress={confirmCancelTrip} style={styles.activeTripBannerCancel}>
+              <Text style={styles.cancelRideText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         {activeTab === "Services" && (
           <ServicesHomeScreen
             user={user}
@@ -694,17 +697,18 @@ export function CustomerHomeScreen({
         )}
         {activeTab === "Rentals" && <RentalsHomeScreen />}
         {activeTab === "Movers" && <MoversHomeScreen user={user} />}
-        {activeTab === "Delivery" && <DeliveryHomeScreen />}
         {activeTab === "Rides" && <View style={styles.rideScreen}>
-        <MapSurface
-          pickup={pickupLocation || currentLocation}
-          destination={destinationLocation}
-          route={route}
-          nearbyDrivers={nearbyDrivers}
-          assignedDriverLocation={assignedDriverLocation}
-          onMapPress={tripState === "IDLE" ? selectMapLocation : undefined}
-          fullScreen
-        />
+        {!isEditingLocations && (
+          <MapSurface
+            pickup={pickupLocation || currentLocation}
+            destination={destinationLocation}
+            route={route}
+            nearbyDrivers={nearbyDrivers}
+            assignedDriverLocation={assignedDriverLocation}
+            onMapPress={tripState === "IDLE" ? selectMapLocation : undefined}
+            fullScreen
+          />
+        )}
 
         {tripState === "IDLE" && !isEditingLocations && !showRideOptions && (
           <TouchableOpacity
@@ -730,16 +734,14 @@ export function CustomerHomeScreen({
 
         {tripState === "IDLE" && isEditingLocations && (
           <ScrollView
-            style={locationEditorStyle}
+            style={styles.locationEditorScreen}
             contentContainerStyle={styles.locationEditorContent}
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.editorHeader}>
               <View style={styles.editorTitleGroup}>
-                <View style={styles.editorBackIcon}>
-                  <Text style={styles.editorBackText}>⌖</Text>
-                </View>
                 <View>
                   <Text style={styles.editorTitle}>Plan your ride</Text>
                   <Text style={styles.editorSubtitle}>Choose where to be picked up and dropped off</Text>
@@ -748,14 +750,14 @@ export function CustomerHomeScreen({
               <TouchableOpacity
                 style={styles.editorCloseButton}
                 accessibilityRole="button"
-                accessibilityLabel="Close location search"
+                accessibilityLabel="Back to map"
                 onPress={() => {
                   Keyboard.dismiss();
                   setActiveLocationField(null);
                   setIsEditingLocations(false);
                 }}
               >
-                <Text style={styles.editorCloseText}>×</Text>
+                <Text style={styles.editorCloseText}>Map</Text>
               </TouchableOpacity>
             </View>
 
@@ -840,7 +842,7 @@ export function CustomerHomeScreen({
             )}
 
             <View style={styles.mapPickRow}>
-              <Text style={styles.mapPickHint}>Choose on map:</Text>
+              <Text style={styles.mapPickHint}>Set on map:</Text>
               {(["pickup", "destination"] as const).map((mode) => (
                 <TouchableOpacity
                   key={mode}
@@ -848,6 +850,7 @@ export function CustomerHomeScreen({
                     setLocationMode(mode);
                     Keyboard.dismiss();
                     setActiveLocationField(null);
+                    setIsEditingLocations(false);
                   }}
                   style={styles.mapPickButton}
                 >
@@ -1074,6 +1077,35 @@ export function CustomerHomeScreen({
             <Text style={styles.tabEyebrow}>YOUR RIDES</Text>
             <Text style={styles.tabTitle}>Activity</Text>
             <Text style={styles.tabSubtitle}>Recent requests, completed journeys and cancellations.</Text>
+            {trip && tripState !== "COMPLETED" && (
+              <View style={styles.activeTripCard}>
+                <Text style={styles.activeTripLabel}>ACTIVE RIDE</Text>
+                <Text style={styles.activeTripTitle}>
+                  {trip.status === "SEARCHING_DRIVER"
+                    ? "Finding your driver"
+                    : trip.status === "TRIP_STARTED"
+                      ? "Trip in progress"
+                      : "Your ride is active"}
+                </Text>
+                <Text style={styles.activeTripRoute} numberOfLines={2}>
+                  {trip.pickup.address} → {trip.destination.address}
+                </Text>
+                <View style={styles.activeTripActions}>
+                  <TouchableOpacity
+                    style={[styles.primaryButton, styles.activeTripViewButton]}
+                    onPress={() => setActiveTab("Rides")}
+                  >
+                    <Text style={styles.primaryButtonText}>View ride</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.cancelRideButton}
+                    onPress={confirmCancelTrip}
+                  >
+                    <Text style={styles.cancelRideText}>Cancel ride</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
             {historyLoading && <Text style={styles.emptyText}>Loading your rides...</Text>}
             {!historyLoading && history.length === 0 && (
               <View style={styles.emptyCard}>
@@ -1143,7 +1175,8 @@ export function CustomerHomeScreen({
           </View>
         )}
       </ScrollView>
-      {!keyboardHeight && <View style={styles.bottomNav}>
+      )}
+      {!keyboardHeight && !isEditingLocations && <View style={styles.bottomNav}>
         {(["Services", "Rides", "Delivery", "Rentals", "Movers", "Activity", "Account"] as const).map((tab) => (
           <TouchableOpacity
             key={tab}
@@ -1168,6 +1201,13 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.navy },
   content: { paddingBottom: 92 },
   rideContent: { flex: 1 },
+  deliveryTab: { flex: 1, minHeight: 0 },
+  activeTripBanner: { flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: "#123b35", borderBottomWidth: 1, borderBottomColor: "#25565a", paddingHorizontal: 16, paddingVertical: 11 },
+  activeTripBannerText: { flex: 1 },
+  activeTripBannerTitle: { color: colors.ink, fontSize: 13, fontWeight: "800", marginTop: 2 },
+  activeTripBannerButton: { backgroundColor: colors.blue, borderRadius: 16, minHeight: 34, paddingHorizontal: 14, alignItems: "center", justifyContent: "center" },
+  activeTripBannerButtonText: { color: "#071015", fontSize: 12, fontWeight: "900" },
+  activeTripBannerCancel: { paddingHorizontal: 4, paddingVertical: 8 },
   rideScreen: { flex: 1, minHeight: 0, position: "relative" },
   mapHeader: {
     position: "absolute",
@@ -1208,7 +1248,7 @@ const styles = StyleSheet.create({
   },
   rideSearchPrompt: {
     position: "absolute",
-    bottom: 86,
+    top: 16,
     left: 16,
     right: 16,
     zIndex: 4,
@@ -1224,25 +1264,21 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 5 },
   },
-  locationEditorSheet: {
+  locationEditorScreen: {
     position: "absolute",
-    left: 12,
-    right: 12,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: "#ffffff",
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: "#e5ebed",
     overflow: "hidden",
     zIndex: 5,
     elevation: 10,
-    shadowColor: "#000000",
-    shadowOpacity: 0.2,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 6 },
   },
   locationEditorContent: {
     padding: 16,
-    paddingBottom: 18,
+    paddingTop: 22,
+    paddingBottom: 32,
   },
   editorHeader: {
     flexDirection: "row",
@@ -1268,15 +1304,16 @@ const styles = StyleSheet.create({
   editorTitle: { color: "#152126", fontSize: 17, fontWeight: "800" },
   editorSubtitle: { color: "#66757b", fontSize: 11, marginTop: 2 },
   editorCloseButton: {
-    width: 36,
+    minWidth: 60,
     height: 36,
+    paddingHorizontal: 10,
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#eef1f2",
     marginLeft: 8,
   },
-  editorCloseText: { color: "#33434a", fontSize: 25, lineHeight: 28 },
+  editorCloseText: { color: "#087f8c", fontSize: 12, fontWeight: "800" },
   editorFields: {
     flexDirection: "row",
     backgroundColor: "#f4f6f6",
@@ -1513,6 +1550,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   locationIcon: { color: colors.blue, fontSize: 25, lineHeight: 26 },
+  nearbyVehicleMarker: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: "#173b43",
+    borderWidth: 2,
+    borderColor: colors.blue,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  nearbyVehicleIcon: { fontSize: 24, lineHeight: 28 },
   rideSheet: {
     position: "absolute",
     left: 12,
@@ -1812,6 +1860,12 @@ const styles = StyleSheet.create({
   tabEyebrow: { color: colors.blue, fontSize: 10, fontWeight: "900", letterSpacing: 1.4 },
   tabTitle: { color: colors.ink, fontSize: 30, fontWeight: "900", marginTop: 5 },
   tabSubtitle: { color: colors.muted, fontSize: 13, lineHeight: 19, marginTop: 5, marginBottom: 20 },
+  activeTripCard: { backgroundColor: "#123b35", borderColor: "#25565a", borderWidth: 1, borderRadius: 16, padding: 16, marginBottom: 16 },
+  activeTripLabel: { color: "#39e6b0", fontSize: 10, fontWeight: "900", letterSpacing: 1 },
+  activeTripTitle: { color: colors.ink, fontSize: 18, fontWeight: "800", marginTop: 6 },
+  activeTripRoute: { color: "#b6c9cb", fontSize: 12, lineHeight: 18, marginTop: 6 },
+  activeTripActions: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 8 },
+  activeTripViewButton: { flex: 1, minHeight: 44 },
   emptyCard: { backgroundColor: colors.panel, borderColor: colors.line, borderWidth: 1, borderRadius: 18, padding: 24, alignItems: "center", gap: 8 },
   emptyIcon: { color: colors.blue, fontSize: 34 },
   emptyTitle: { color: colors.ink, fontSize: 19, fontWeight: "800" },

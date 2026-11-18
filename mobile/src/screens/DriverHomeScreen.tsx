@@ -222,6 +222,26 @@ export function DriverHomeScreen({
   }, []);
 
   useEffect(() => {
+    if (!isOnline) return;
+
+    let active = true;
+    const refreshActiveTrip = () => {
+      getActiveTrip()
+        .then((activeTrip) => {
+          if (active && activeTrip) showTrip(activeTrip);
+        })
+        .catch(() => undefined);
+    };
+
+    refreshActiveTrip();
+    const refreshTimer = setInterval(refreshActiveTrip, 5000);
+    return () => {
+      active = false;
+      clearInterval(refreshTimer);
+    };
+  }, [isOnline]);
+
+  useEffect(() => {
     let watcher: Location.LocationSubscription | undefined;
     async function watchDriver() {
       if (!isOnline) return;

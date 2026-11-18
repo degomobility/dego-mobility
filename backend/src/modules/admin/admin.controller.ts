@@ -133,4 +133,16 @@ export class AdminController {
         next(error);
       }
   }
+
+  static async assignVehicle(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const vehicle = await VehicleService.assignDriver(
+        req.params.id as string,
+        req.body.driverId,
+      );
+      ApiResponse.success(res, vehicle, req.body.driverId ? 'Vehicle assigned to driver' : 'Vehicle unassigned');
+    } catch (error) {
+      next(error);
+    }
+  }
 }

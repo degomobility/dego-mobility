@@ -5,6 +5,7 @@ import { Permission, UserRole } from "../../lib/types";
 import { apiRequest } from "../../lib/api";
 import { PermissionGate } from "../../components/PermissionGate";
 import { useAuth } from "../../context/AuthContext";
+import { PaginationControls, usePagination } from "../../components/Pagination";
 
 interface ManagedUser {
   _id?: string;
@@ -34,6 +35,7 @@ export default function UsersPage() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
+  const pagination = usePagination(users);
 
   async function reload() {
     setError("");
@@ -116,7 +118,7 @@ export default function UsersPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead className="bg-slate-950 text-xs uppercase text-slate-500"><tr><th className="p-3">User</th><th className="p-3">Phone</th><th className="p-3">Role</th><th className="p-3">Status</th><th className="p-3">Action</th></tr></thead>
-                <tbody>{users.map((user) => <tr key={user._id || user.id} className="border-t border-slate-800">
+                <tbody>{pagination.items.map((user) => <tr key={user._id || user.id} className="border-t border-slate-800">
                   <td className="p-3"><div className="font-medium text-white">{user.name}</div><div className="text-xs text-slate-400">{user.email}</div></td>
                   <td className="p-3 text-slate-300">{user.phone}</td>
                   <td className="p-3 text-slate-300">{user.role}</td>
@@ -124,6 +126,7 @@ export default function UsersPage() {
                   <td className="p-3"><button onClick={() => void toggleStatus(user)} className="rounded border border-slate-700 px-2.5 py-1.5 text-xs text-slate-200 hover:bg-slate-800">{user.status === "ACTIVE" ? "Suspend" : "Activate"}</button></td>
                 </tr>)}</tbody>
               </table>
+              <PaginationControls {...pagination} onPageChange={pagination.setPage} onPageSizeChange={pagination.setPageSize} />
               {!users.length && <p className="p-4 text-sm text-slate-400">No users found.</p>}
             </div>
           )}

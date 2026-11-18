@@ -4,6 +4,7 @@ import React, { FormEvent, useEffect, useState } from "react";
 import { apiRequest } from "../../lib/api";
 import { Permission } from "../../lib/types";
 import { PermissionGate } from "../../components/PermissionGate";
+import { PaginationControls, usePagination } from "../../components/Pagination";
 
 type Category = "STANDARD" | "COMFORT" | "PREMIUM" | "XL";
 type VehicleStatus = "ACTIVE" | "MAINTENANCE" | "INACTIVE";
@@ -19,6 +20,11 @@ interface VehicleRecord {
   category: Category;
   status: VehicleStatus;
 }
+interface DriverOption {
+  _id: string;
+  userId?: { name?: string; phone?: string };
+  approvalStatus: string;
+}
 
 const initialForm = {
   driverId: "",
@@ -33,15 +39,22 @@ const initialForm = {
 
 export default function VehiclesPage() {
   const [vehicles, setVehicles] = useState<VehicleRecord[]>([]);
+  const [drivers, setDrivers] = useState<DriverOption[]>([]);
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
+  const pagination = usePagination(vehicles);
 
   async function reload() {
     setError("");
     try {
-      setVehicles(await apiRequest<VehicleRecord[]>("/admin/vehicles"));
+      const [vehicleRecords, driverRecords] = await Promise.all([
+        apiRequest<VehicleRecord[]>("/admin/vehicles"),
+        apiRequest<DriverOption[]>("/admin/drivers"),
+      ]);
+      setVehicles(vehicleRecords);
+      setDrivers(driverRecords);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Unable to load vehicles.");
     } finally {
@@ -49,6 +62,20 @@ export default function VehiclesPage() {
     }
   }
   useEffect(() => { void reload(); }, []);
+
+  async function assignDriver(vehicle: VehicleRecord, driverId: string) {
+    setError("");
+    try {
+      const updated = await apiRequest<VehicleRecord>(`/admin/vehicles/${vehicle._id}/driver`, {
+        method: "PATCH",
+        body: JSON.stringify({ driverId: driverId || null }),
+      });
+      setVehicles((current) => current.map((item) => item._id === updated._id ? updated : item));
+      setNotice(driverId ? "Vehicle assigned to driver." : "Vehicle unassigned.");
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Unable to assign vehicle.");
+    }
+  }
 
   async function createVehicle(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -107,16 +134,18 @@ export default function VehiclesPage() {
         <section className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900">
           <div className="border-b border-slate-800 p-4 font-semibold text-white">Fleet</div>
           {loading ? <p className="p-4 text-sm text-slate-400">Loading fleet…</p> : <table className="w-full text-left text-sm">
-            <thead className="bg-slate-950 text-xs uppercase text-slate-500"><tr><th className="p-3">Vehicle</th><th className="p-3">VIN</th><th className="p-3">Driver</th><th className="p-3">Category</th><th className="p-3">Status</th><th className="p-3">Change status</th></tr></thead>
-            <tbody>{vehicles.map((vehicle) => <tr key={vehicle._id} className="border-t border-slate-800">
+            <thead className="bg-slate-950 text-xs uppercase text-slate-500"><tr><th className="p-3">Vehicle</th><th className="p-3">VIN</th><th className="p-3">Driver</th><th className="p-3">Category</th><th className="p-3">Status</th><th className="p-3">Change status</th><th className="p-3">Assign driver</th></tr></thead>
+            <tbody>{pagination.items.map((vehicle) => <tr key={vehicle._id} className="border-t border-slate-800">
               <td className="p-3 text-white">{vehicle.year} {vehicle.make} {vehicle.model}<div className="text-xs text-slate-400">{vehicle.registrationNumber} · {vehicle.color}</div></td>
               <td className="p-3 font-mono text-xs text-slate-300">{vehicle.vin}</td>
               <td className="p-3 text-slate-300">{vehicle.driverId?.userId?.name || "Unassigned"}</td>
               <td className="p-3 text-slate-300">{vehicle.category}</td>
               <td className="p-3 text-slate-300">{vehicle.status}</td>
               <td className="p-3"><select aria-label={`Set ${vehicle.registrationNumber} status`} value={vehicle.status} onChange={(event) => void updateStatus(vehicle, event.target.value as VehicleStatus)} className="rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-xs text-white">{(["ACTIVE", "MAINTENANCE", "INACTIVE"] as VehicleStatus[]).map((status) => <option key={status}>{status}</option>)}</select></td>
+              <td className="p-3"><select aria-label={`Assign ${vehicle.registrationNumber} to driver`} value={vehicle.driverId?._id || ""} onChange={(event) => void assignDriver(vehicle, event.target.value)} className="max-w-48 rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-xs text-white"><option value="">Unassigned</option>{drivers.filter((driver) => driver.approvalStatus === "APPROVED").map((driver) => <option key={driver._id} value={driver._id}>{driver.userId?.name || driver._id}</option>)}</select></td>
             </tr>)}</tbody>
           </table>}
+          {!loading && <PaginationControls {...pagination} onPageChange={pagination.setPage} onPageSizeChange={pagination.setPageSize} />}
           {!loading && !vehicles.length && <p className="p-4 text-sm text-slate-400">No vehicles registered.</p>}
         </section>
       </div>

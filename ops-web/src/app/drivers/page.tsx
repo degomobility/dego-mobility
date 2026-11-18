@@ -6,6 +6,7 @@ import { RefreshCw, UserPlus, UserCheck } from "lucide-react";
 import { apiRequest } from "../../lib/api";
 import { Permission } from "../../lib/types";
 import { PermissionGate } from "../../components/PermissionGate";
+import { PaginationControls, usePagination } from "../../components/Pagination";
 
 interface DriverRecord {
   _id: string;
@@ -23,6 +24,7 @@ export default function DriversPage() {
   const [drivers, setDrivers] = useState<DriverRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const pagination = usePagination(drivers);
   async function load() {
     setError("");
     try {
@@ -54,7 +56,7 @@ export default function DriversPage() {
           {loading ? <p className="p-4 text-sm text-slate-400">Loading drivers…</p> : (
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-950 text-xs uppercase text-slate-500"><tr><th className="p-3">Driver</th><th className="p-3">Approval</th><th className="p-3">Availability</th><th className="p-3">Vehicle</th><th className="p-3">Trips / rating</th></tr></thead>
-              <tbody>{drivers.map((driver) => <tr key={driver._id} className="border-t border-slate-800">
+              <tbody>{pagination.items.map((driver) => <tr key={driver._id} className="border-t border-slate-800">
                 <td className="p-3"><div className="font-medium text-white">{driver.userId?.name || "Driver"}</div><div className="text-xs text-slate-400">{driver.userId?.email} · {driver.userId?.phone}</div><div className="mt-1 font-mono text-[10px] text-slate-500">{driver._id}</div></td>
                 <td className="p-3"><span className={driver.approvalStatus === "APPROVED" ? "text-emerald-300" : driver.approvalStatus === "REJECTED" ? "text-rose-300" : "text-amber-300"}>{driver.approvalStatus}</span></td>
                 <td className="p-3 text-slate-300">{driver.onlineStatus} · {driver.availabilityStatus}</td>
@@ -63,6 +65,7 @@ export default function DriversPage() {
               </tr>)}</tbody>
             </table>
           )}
+          {!loading && <PaginationControls {...pagination} onPageChange={pagination.setPage} onPageSizeChange={pagination.setPageSize} />}
           {!loading && !drivers.length && <p className="p-4 text-sm text-slate-400">No drivers have registered.</p>}
         </div>
       </div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
 import { rentalFile, rentalRequest, rentalUpload } from "../../lib/api";
 import { Permission } from "../../lib/types";
+import { PaginationControls, usePagination } from "../../components/Pagination";
 
 type Section = "AGENCIES" | "VEHICLES" | "DRIVERS" | "RATES" | "LICENSES" | "BOOKINGS";
 type RecordRow = Record<string, unknown> & { _id: string; status?: string; reviewNotes?: string };
@@ -69,6 +70,7 @@ export default function RentalOperationsPage() {
     category: "SEDAN", currency: "RWF", hourlyRate: "", dailyRate: "", weeklyRate: "",
     minimumHours: "24", securityDeposit: "", chauffeurDailyRate: "0", agencyId: "",
   });
+  const pagination = usePagination(rows[section], section);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -486,7 +488,7 @@ export default function RentalOperationsPage() {
                 <tr>{columns[section].map((column) => <th key={column} className="px-4 py-3">{column.replace(/([A-Z])/g, " $1")}</th>)}<th className="px-4 py-3">Action</th></tr>
               </thead>
               <tbody className="divide-y divide-slate-800">
-                {rows[section].map((row) => (
+                {pagination.items.map((row) => (
                   <tr key={row._id} className="align-top text-slate-300">
                     {columns[section].map((column) => (
                       <td key={column} className="max-w-56 px-4 py-3">
@@ -501,6 +503,9 @@ export default function RentalOperationsPage() {
               </tbody>
             </table>
           </div>
+        )}
+        {!loading && rows[section].length > 0 && (
+          <PaginationControls {...pagination} onPageChange={pagination.setPage} onPageSizeChange={pagination.setPageSize} />
         )}
       </section>
     </div>

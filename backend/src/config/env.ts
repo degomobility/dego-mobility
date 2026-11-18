@@ -9,7 +9,7 @@ export const env = {
   MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/2go_dev',
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET || '2go_fallback_access_secret_key_32chars_min',
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || '2go_fallback_refresh_secret_key_32chars_min',
-  JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
+  JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN || '48h',
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   CORS_ORIGIN: (process.env.CORS_ORIGIN || '*')
     .split(',')

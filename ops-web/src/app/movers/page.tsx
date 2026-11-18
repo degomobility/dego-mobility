@@ -5,6 +5,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import { moverRequest } from "../../lib/api";
 import { Permission } from "../../lib/types";
 import { useAuth } from "../../context/AuthContext";
+import { PaginationControls, usePagination } from "../../components/Pagination";
 
 type Section = "AGENCIES" | "VEHICLES" | "REQUESTS" | "MOVES" | "QUOTES";
 type Row = Record<string, unknown> & { _id: string; status?: string; reviewNotes?: string };
@@ -59,6 +60,9 @@ export default function MoversOperationsPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState("");
+  const pagination = usePagination(rows[section], section);
+  const adminOpenMoves = rows.MOVES.filter((move) => move.status === "OPEN" || move.status === "QUOTED");
+  const adminOpenMovesPagination = usePagination(adminOpenMoves, "admin-open-moves");
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -274,7 +278,7 @@ export default function MoversOperationsPage() {
         </form>
       )}
 
-      {isPartner && section === "REQUESTS" && rows.REQUESTS.map((move) => {
+      {isPartner && section === "REQUESTS" && pagination.items.map((move) => {
         const availableVehicles = Array.isArray(move.vehicles) ? move.vehicles as Row[] : [];
         const existingQuote = move.existingQuote as Row | null;
         const form = quoteForms[move._id] || {
@@ -304,8 +308,11 @@ export default function MoversOperationsPage() {
           </article>
         );
       })}
+      {isPartner && section === "REQUESTS" && (
+        <PaginationControls {...pagination} onPageChange={pagination.setPage} onPageSizeChange={pagination.setPageSize} />
+      )}
 
-      {isPartner && section === "MOVES" && rows.MOVES.map((move) => (
+      {isPartner && section === "MOVES" && pagination.items.map((move) => (
         <article key={move._id} className="mt-5 rounded-2xl border border-slate-800 bg-slate-900 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-lg font-black text-white">{show(move.pickupCity)} → {show(move.destinationCity)}</h2>
@@ -317,6 +324,9 @@ export default function MoversOperationsPage() {
           {move.status === "IN_PROGRESS" && <button disabled={busy === move._id} onClick={() => void mutate(`/agency/moves/${move._id}/status`, "PATCH", { status: "COMPLETED" }, move._id)} className={`${buttonClass} mt-4`}>Mark completed</button>}
         </article>
       ))}
+      {isPartner && section === "MOVES" && (
+        <PaginationControls {...pagination} onPageChange={pagination.setPage} onPageSizeChange={pagination.setPageSize} />
+      )}
 
       {loading ? <p className="mt-6 text-sm text-slate-400">Loading moving-service records…</p> : section === "REQUESTS" && rows.REQUESTS.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-900 p-6 text-sm text-slate-400">There are no open move requests to quote right now.</div>
@@ -334,7 +344,7 @@ export default function MoversOperationsPage() {
             <table className="w-full min-w-[760px] text-left text-xs">
               <thead className="bg-slate-950/70 text-[10px] uppercase tracking-wider text-slate-500"><tr>{columns[section].map((column) => <th key={column} className="px-4 py-3">{column.replace(/([A-Z])/g, " $1")}</th>)}<th className="px-4 py-3">Action</th></tr></thead>
               <tbody className="divide-y divide-slate-800">
-                {rows[section].map((row) => (
+                {pagination.items.map((row) => (
                   <tr key={row._id} className="align-top text-slate-300">
                     {columns[section].map((column) => <td key={column} className="max-w-56 px-4 py-3">{column === "status" || column === "paymentStatus" ? <span className={`inline-flex rounded-full border px-2 py-1 text-[10px] font-black ${statusStyle(String(row[column]))}`}>{show(row[column])}</span> : show(row[column])}</td>)}
                     <td className="px-4 py-3">{section === "AGENCIES" && canReview && (row.status === "PENDING" || row.status === "REJECTED") ? <div className="flex gap-2"><button disabled={busy === row._id} onClick={() => void mutate(`/admin/agencies/${row._id}`, "PATCH", { status: "APPROVED" }, row._id)} className={buttonClass}>Approve</button><button disabled={busy === row._id} onClick={() => void mutate(`/admin/agencies/${row._id}`, "PATCH", { status: "REJECTED" }, row._id)} className="rounded-lg border border-rose-900 px-3 py-2 text-xs font-bold text-rose-300">Reject</button></div>
@@ -351,11 +361,15 @@ export default function MoversOperationsPage() {
               </tbody>
             </table>
           </div>
+          {!loading && rows[section].length > 0 && (
+            <PaginationControls {...pagination} onPageChange={pagination.setPage} onPageSizeChange={pagination.setPageSize} />
+          )}
         </section>
       ))}
-      {!isPartner && section === "MOVES" && canManage && rows.MOVES
-        .filter((move) => move.status === "OPEN" || move.status === "QUOTED")
-        .map(renderAdminQuoteForm)}
+      {!isPartner && section === "MOVES" && canManage && adminOpenMovesPagination.items.map(renderAdminQuoteForm)}
+      {!isPartner && section === "MOVES" && canManage && (
+        <PaginationControls {...adminOpenMovesPagination} onPageChange={adminOpenMovesPagination.setPage} onPageSizeChange={adminOpenMovesPagination.setPageSize} />
+      )}
       <div className="mt-6 flex justify-end"><button onClick={() => void loadData()} className="text-xs font-bold text-orange-300">Refresh data</button></div>
     </div>
   );
