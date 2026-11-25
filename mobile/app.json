@@ -1,20 +1,20 @@
 {
   "expo": {
-    "name": "2GO Mobility",
-    "slug": "2go",
+    "name": "DEGO Mobility",
+    "slug": "dego-mobility",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.chawextech.2go",
+      "bundleIdentifier": "com.dego.app",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "com.chawextech.twogo",
+      "package": "com.dego.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#0f172a"
@@ -22,10 +22,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": "fffd5f37-64da-499d-a5f9-4d7ece49bce8"
+        "projectId": "e80fd4db-ef38-4e5e-9c10-4a6b82116d9a"
       }
     },
-    "owner": "chawextech",
+    "owner": "degomobility",
     "plugins": [
       "expo-secure-store",
       [
